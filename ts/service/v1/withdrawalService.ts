@@ -1,16 +1,16 @@
 import config from "../../config.js";
 import balanceService from "./balanceService.js";
 import transactionService from "./transactionService.js";
-import { sendBitcoin, sendErc20, sendEth } from "../../function/wallet/functionSendCoinWallet.js";
+import { sendBitcoin, sendErc20, sendEth, sendTron } from "../../function/wallet/functionSendCoinWallet.js";
 
 const amountСompensation: {
     btc: number,
     eth: number,
-    eth_erc20: number,
+    tron: number,
 } = {
     btc: 0.0003,
     eth: 0.006,
-    eth_erc20: 0.006,
+    tron: 4,
 }
 
 class WithdrawalService {
@@ -44,18 +44,16 @@ class WithdrawalService {
                     return this.successResponse(sendEthHash);
                     break;
 
-                case "usdt(erc20)":
-                    if (balanceUser.amount < amount) return this.errorResponse("Insufficient funds!", "Insufficient funds!");
-                    if ((await balanceService.balance(user)).data.data.find(c => c.coin === "eth").amount < balanceUser.amountCommission) return this.errorResponse("Insufficient funds to pay the fee!", "Insufficient funds to pay the fee!");
-
-                    const sendUsdtErc20Hash = await sendErc20(config.wallet.eth.privateKey, address, amount, "0xdac17f958d2ee523a2206206994597c13d831ec7");
+                case "tron":
+                    if (balanceUser.amount < amountSendAndCommission) return this.errorResponse("Insufficient funds!", "Insufficient funds!");
+                    const sendTronHash = await sendTron(config.wallet.trc.privateKey, config.wallet.trc.address, address, amountSend);
 
                     //проверка создания транзакции
-                    if (typeof sendUsdtErc20Hash != "string") return this.errorResponse("Translation error!", "Translation error!");
+                    if (typeof sendTronHash.txid != "string") return this.errorResponse("Translation error!", "Translation error!");
 
-                    await this.controlBalanceВifferentСurrencies(user, "usdt_erc20", "eth", sendUsdtErc20Hash, amount, balanceUser.amountCommission, balanceUser.amountCommission - amountСompensation.eth_erc20, date);
+                    await this.controlBalance(user, coin, sendTronHash.txid, amountSend, amountSendAndCommission, adminProfit, date);
 
-                    return this.successResponse(sendUsdtErc20Hash);
+                    return this.successResponse(sendTronHash.txid);
                     break;
 
                 case "test_coin":
@@ -94,32 +92,6 @@ class WithdrawalService {
             await transactionService.save(config.adminUser, {
                 hash: 'admin profit',
                 coin,
-                amount: adminProfit,
-                date,
-                type: "get",
-            });
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    async controlBalanceВifferentСurrencies(user, coin: string, coinCommission: string, hash: string, amountSend: number, amountCommission: number, adminProfit: number, date: string): Promise<void> {
-        console.log({ user, coin, coinCommission, hash, amountSend, amountCommission, adminProfit, date });
-        try {
-            await balanceService.balanceMainEdit(user, coin, -amountSend); //снятие средств у пользователя
-            await balanceService.balanceMainEdit(user, coinCommission, -amountCommission); //снятие средств у пользователя за перевод
-            await transactionService.save(user, {
-                hash,
-                coin: "usdt(erc20)",
-                amount: amountSend,
-                date,
-                type: "send",
-            });
-
-            await balanceService.balanceMainEdit(config.adminUser, coinCommission, adminProfit); // начисления админского профита
-            await transactionService.save(config.adminUser, {
-                hash: 'admin profit',
-                coin: coinCommission,
                 amount: adminProfit,
                 date,
                 type: "get",

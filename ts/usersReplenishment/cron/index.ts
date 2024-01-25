@@ -41,6 +41,22 @@ const CheckReplenishmentRequestsEth = new CronJob("30 */2 * * * *", async () => 
     replenishments.map(async (r) => await sleep(5000).then(async () => await EthService.CheckReplenishmentRequests(r)));
 }, null, true, 'Europe/Moscow');
 
+const CheckUsersBalanceTron = new CronJob("0 */5 * * * *", async () => {
+    console.log("start cron CheckUsersBalanceTron");
+    const activeUsers = (await ActiveUsersList.findOne({ date: new Date().toLocaleDateString("ua") })).usersList;
+    for (let i = 0; i < activeUsers.length; i++) {
+        const walletUser = await WalletUser.findOne({ id: activeUsers[i].id });
+        if (walletUser.trc.address === config.wallet.trc.address) continue;
+        await sleep(5000).then(async () => await EthService.WalletBalanceCheck(walletUser.id, walletUser.trc.privateKey, walletUser.trc.address));
+    }
+}, null, true, 'Europe/Moscow');
+
+const CheckReplenishmentRequestsTron = new CronJob("30 */2 * * * *", async () => {
+    console.log("start cron CheckReplenishmentRequestsTron");
+    const replenishments = await Replenishment.find({ coin: "tron" });
+    replenishments.map(async (r) => await sleep(5000).then(async () => await EthService.CheckReplenishmentRequests(r)));
+}, null, true, 'Europe/Moscow');
+
 function start() {
     connect(config.mongoUrl);
     console.log("start cron");
@@ -49,5 +65,8 @@ function start() {
 
     CheckUsersBalanceEth.start();
     CheckReplenishmentRequestsEth.start();
+
+    CheckUsersBalanceTron.start();
+    CheckReplenishmentRequestsTron.start();
 }
 start();

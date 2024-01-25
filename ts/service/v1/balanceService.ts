@@ -96,13 +96,13 @@ class WalletService {
                 },
                 {
                     coin: "tron",
-                    status: false,
+                    status: true,
                     amount: balance.main.tron,
-                    amountCommission: 0,
+                    amountCommission: 20,
                     coinComission: "tron",
                     network: "TRC-20",
-                    minimumAmountReplenishment: 2.1,
-                    minimumWithdrawalAmount: 2,
+                    minimumAmountReplenishment: 1,
+                    minimumWithdrawalAmount: 5,
                     priceToUsd: dataRate.data.tron.usd,
                     priceBalanceInCurrency: {
                         usd: balance.main.tron * dataRate.data.tron.usd,
@@ -118,7 +118,7 @@ class WalletService {
 
                 {
                     coin: "test_coin",
-                    status: false,
+                    status: true,
                     amount: 1000,
                     amountCommission: 0.00039,
                     network: "Test Coin",

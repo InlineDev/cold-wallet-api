@@ -1,5 +1,9 @@
+import ethers from "ethers";
+import TronWeb from "tronweb";
+import { round } from "mathjs";
 import CryptoAccount from "send-crypto";
 
+const urlApiTronMainnet = ""
 export const sendBitcoin = async (privateKey: string, amount: number, address: string, subtractFee: boolean = false) => {
     try {
         const account = new CryptoAccount(privateKey);
@@ -45,4 +49,29 @@ export const sendErc20 = async (privateKey: string, toAddress: string, amount: n
     } catch (error) {
         console.log("sendErc20Error: " + error);
     }
+}
+
+export const sendTron = async (privateKey: string, addressFrom: string, addressTo: string, amount: number, urlApi = urlApiTronMainnet) => {
+    const HttpProvider = TronWeb.providers.HttpProvider;
+    let fullNode = new HttpProvider(urlApi);
+    let eventServer = new HttpProvider(urlApi);
+    let solidityNode = new HttpProvider(urlApi);
+    let tronWeb = new TronWeb(fullNode, solidityNode, eventServer, privateKey);
+    try {
+        amount = valueToSun(amount);
+        const tradeobj = await tronWeb.transactionBuilder.sendTrx(tronWeb.address.toHex(addressTo), amount, tronWeb.address.toHex(addressFrom));
+        const signedtxn = await tronWeb.trx.sign(tradeobj, privateKey);
+        const receipt = await tronWeb.trx.sendRawTransaction(signedtxn);
+        if (!receipt.result)
+            return new Error('Непредвиденная ошибка sendTron!');
+        return receipt;
+    } catch (error) {
+        return new Error(error);
+    }
+};
+
+export function valueToSun(value, decimals = 6) {
+    value = round(value, decimals);
+    value = ethers.utils.parseUnits(`${value}`, decimals);
+    return value;
 }
