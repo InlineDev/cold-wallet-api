@@ -5,13 +5,11 @@ import { connect } from 'mongoose';
 import router from './router/index.js';
 import { getPrice } from './function/rate/functionReteCoin.js';
 import { createAndPushActiveUsers } from './function/active/functionActive.js';
-import { generateAccount } from "tron-create-address";
 
 const app = express();
 
 (async function run() {
   try {
-    console.log(await generateAccount());
     connect(config.mongoUrl); //connect DB
 
     app.use((req, res, next) => {
