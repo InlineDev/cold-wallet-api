@@ -41,6 +41,7 @@
     "mongoose": "^7.4.1",
     "nodejs-base64": "^2.0.0",
     "send-crypto": "^0.2.38",
+    "swagger-ui-express": "^5.0.0",
     "tiny-secp256k1": "^2.2.3",
     "tron-create-address": "^0.1.11",
     "tronweb": "^5.3.1",

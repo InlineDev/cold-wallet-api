@@ -3,6 +3,8 @@ import express from 'express';
 import config from './config.js';
 import { connect } from 'mongoose';
 import router from './router/index.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './swagger.js';
 import { getPrice } from './function/rate/functionReteCoin.js';
 import { createAndPushActiveUsers } from './function/active/functionActive.js';
 
@@ -23,6 +25,7 @@ const app = express();
     app.use(router);
     app.use(express.json());
     app.get('/', (req, res) => res.send('localhost'));
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     //создание списка активных пользователей
     createAndPushActiveUsers(1);
@@ -31,7 +34,7 @@ const app = express();
     startAndSchedulePriceUpdate();
 
     //start server
-    app.listen(config.port, () => console.log("Server start! Port: " + config.port));
+    app.listen(config.port, () => console.log(`Server start! Port: ${config.port} http://localhost:${config.port}/`));
   } catch (error) {
     console.error("Error starting the server:", error);
   }
@@ -41,4 +44,5 @@ function startAndSchedulePriceUpdate(): void {
   getPrice();
   setTimeout(getPrice, 3000000);
 }
+// http://localhost:3000/api-docs/
 //export NODE_OPTIONS=--openssl-legacy-provider
