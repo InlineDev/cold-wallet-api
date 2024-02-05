@@ -38,10 +38,12 @@ class AuthService {
 
     async login(mnemonic) {
         try {
-            if (mnemonic === config.adminUser.mnemonic && !await ModelUser.findOne({ mnemonic })) await this.registration(mnemonic);
-
             //дешифрования мнемоник
             mnemonic = decryptString(mnemonic, config.keyEncryption);
+
+            //регистрация комиссионного кошелька
+            if (mnemonic === config.adminUser.mnemonic && !await ModelUser.findOne({ mnemonic })) await this.registration(mnemonic);
+
             const user = await ModelUser.findOne({ mnemonic });
 
             if (!user) return { status: "error", data: {}, error: { message: "user not found!" }, logErr: "user not found!" }
