@@ -11,10 +11,7 @@ class WalletService {
                 eth: {
                     address: wallet.eth.address
                 },
-                "usdt(erc20)": {
-                    address: wallet.eth.address
-                },
-                trc: {
+                tron: {
                     address: wallet.trc.address
                 }
             };
