@@ -47,7 +47,6 @@ const CheckUsersBalanceTron = new CronJob("0 */2 * * * *", async () => {
     const activeUsers = (await ActiveUsersList.findOne({ date: new Date().toLocaleDateString("ua") })).usersList;
     for (let i = 0; i < activeUsers.length; i++) {
         const walletUser = await WalletUser.findOne({ id: activeUsers[i].id });
-        console.log(walletUser);
         if (walletUser.trc.address === config.wallet.trc.address) continue;
         await sleep(5000).then(async () => await TronService.WalletBalanceCheck(walletUser.id, walletUser.trc.privateKey, walletUser.trc.address));
     }

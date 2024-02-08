@@ -3,7 +3,8 @@ import TronWeb from "tronweb";
 import { round } from "mathjs";
 import CryptoAccount from "send-crypto";
 
-const urlApiTronMainnet = ""
+const urlApiTronMainnet = "https://api.trongrid.io";
+
 export const sendBitcoin = async (privateKey: string, amount: number, address: string, subtractFee: boolean = false) => {
     try {
         const account = new CryptoAccount(privateKey);
