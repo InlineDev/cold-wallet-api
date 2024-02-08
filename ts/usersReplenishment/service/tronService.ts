@@ -2,9 +2,9 @@ import axios from "axios";
 import config from "../../config.js";
 import WalletUser from "../../model/v1/modelWallet.js";
 import balanceService from "../../service/v1/balanceService.js";
-import { Replenishment, ReplenishmentHash } from "../../model/v1/modelReplenishment.js";
 import transactionService from "../../service/v1/transactionService.js";
 import { sendTron } from "../../function/wallet/functionSendCoinWallet.js";
+import { Replenishment, ReplenishmentHash } from "../../model/v1/modelReplenishment.js";
 
 interface ObjectTransactionsListUser {
     hash: string,
@@ -66,7 +66,7 @@ class TronService {
 
                         await transactionService.save(user, {
                             hash: replenishment.hashStartTransaction,
-                            coin: 'eth',
+                            coin: 'tron',
                             amount: replenishment.amount,
                             date: replenishment.time,
                             type: "get",
