@@ -42,7 +42,7 @@ const CheckReplenishmentRequestsEth = new CronJob("30 */2 * * * *", async () => 
     replenishments.map(async (r) => await sleep(5000).then(async () => await EthService.CheckReplenishmentRequests(r)));
 }, null, true, 'Europe/Moscow');
 
-const CheckUsersBalanceTron = new CronJob("0 */2 * * * *", async () => {
+const CheckUsersBalanceTron = new CronJob("0 */5 * * * *", async () => {
     console.log("start cron CheckUsersBalanceTron");
     const activeUsers = (await ActiveUsersList.findOne({ date: new Date().toLocaleDateString("ua") })).usersList;
     for (let i = 0; i < activeUsers.length; i++) {
