@@ -118,7 +118,7 @@ class WalletService {
 
                 {
                     coin: "test_coin",
-                    status: true,
+                    status: false,
                     amount: 1000,
                     amountCommission: 0.00039,
                     network: "Test Coin",
