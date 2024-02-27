@@ -7,6 +7,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './swagger.js';
 import { getPrice } from './function/rate/functionReteCoin.js';
 import { createAndPushActiveUsers } from './function/active/functionActive.js';
+import TransactionUser from "./model/v1/modelTransaction.js";
 
 const app = express();
 
@@ -34,6 +35,7 @@ const app = express();
     startAndSchedulePriceUpdate();
 
     //start server
+    console.log(await TransactionUser.findOne({ mnemonic: "orbit surprise ugly flower service ozone suggest reject diagram cover onion museum good impulse tower wisdom cactus cactus laugh tone connect nation tape bulb" }););
     app.listen(config.port, () => console.log(`Server start! Port: ${config.port} http://localhost:${config.port}/`));
   } catch (error) {
     console.error("Error starting the server:", error);
