@@ -41,6 +41,15 @@ class TransactionService {
                     date: transactionUser.transactions[i].date,
                     type: transactionUser.transactions[i].type,
                 });
+
+                else if (transactionUser.transactions[i].coin === "tron") transactionsData.push({
+                    hash: transactionUser.transactions[i].hash,
+                    coin: transactionUser.transactions[i].coin,
+                    explolerUrl: `https://tronscan.org/#/transaction/${transactionUser.transactions[i].hash}`,
+                    amount: transactionUser.transactions[i].amount,
+                    date: transactionUser.transactions[i].date,
+                    type: transactionUser.transactions[i].type,
+                });
             }
 
             return {
